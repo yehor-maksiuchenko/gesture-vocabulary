@@ -4,6 +4,10 @@ import time
 
 cap = cv2.VideoCapture(0)
 
+# Variables for FPS calculation
+prev_frame_time = 0
+new_frame_time = 0
+
 BaseOptions = mp.tasks.BaseOptions
 HandLandmarker = mp.tasks.vision.HandLandmarker
 HandLandmarkerOptions = mp.tasks.vision.HandLandmarkerOptions
@@ -28,6 +32,13 @@ with HandLandmarker.create_from_options(options) as landmarker:
     while True:
         success, img = cap.read()
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        # 1. Calculate FPS
+        new_frame_time = time.time()
+        fps = 1 / (new_frame_time - prev_frame_time)
+        prev_frame_time = new_frame_time
+
+        fps_text = f"FPS: {int(fps)}"
         
         # Wrap frame for MediaPipe
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=imgRGB)
@@ -56,5 +67,6 @@ with HandLandmarker.create_from_options(options) as landmarker:
                     cv2.line(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
 
+        cv2.putText(img, fps_text, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         cv2.imshow("Image", img)
         cv2.waitKey(1)
