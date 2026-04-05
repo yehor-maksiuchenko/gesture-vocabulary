@@ -1,5 +1,5 @@
 import cv2
-from HandTracking import HandTracker
+from hand_tracker import HandTracker
 from hand_processor import HandProcessor
 from gesture_recognizer import GestureRecognizer
 from gesture_db import GestureDB
